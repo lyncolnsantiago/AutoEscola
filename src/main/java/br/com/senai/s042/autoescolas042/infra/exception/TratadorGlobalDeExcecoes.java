@@ -13,12 +13,12 @@ import java.util.List;
 public class TratadorGlobalDeExcecoes {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Void> TratarNotFound() {
+    public ResponseEntity<Void> tratarNotFound() {
         return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity TratarBadRequest(MethodArgumentNotValidException ex) {
+    public ResponseEntity<List<DadosBadRequest>> tratarBadRequest(MethodArgumentNotValidException ex) {
         List<FieldError> erros = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(erros.stream().map(DadosBadRequest::new).toList());
     }

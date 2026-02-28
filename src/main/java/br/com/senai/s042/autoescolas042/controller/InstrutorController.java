@@ -21,20 +21,24 @@ public class InstrutorController {
     private InstrutorRepository repository;
 
     @PostMapping
-    @Transactional // Padrão internacional, importante usar.
+    @Transactional
     public ResponseEntity<DadosDetalhamentoInstrutor> cadastrarInstrutor(
             @RequestBody @Valid DadosCadastroInstrutor dados,
             UriComponentsBuilder uriBuilder) {
         Instrutor instrutor = new Instrutor(dados);
         repository.save(instrutor);
-        URI uri = uriBuilder.path("/instrutor/{id}").buildAndExpand(instrutor.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoInstrutor(instrutor));
+        URI uri = uriBuilder.path("/instrutores/{id}")
+                .buildAndExpand(instrutor.getId()).toUri();
+        return ResponseEntity.created(uri)
+                .body(new DadosDetalhamentoInstrutor(instrutor));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemInstrutor>> listarInstrutores(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
-        Page page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemInstrutor::new);
-        return  ResponseEntity.ok(page);
+    public ResponseEntity<Page<DadosListagemInstrutor>> listarInstrutores(
+            @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+        Page page = repository.findAllByAtivoTrue(paginacao).
+                map(DadosListagemInstrutor::new);
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")
@@ -45,24 +49,24 @@ public class InstrutorController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity<DadosDetalhamentoInstrutor> atualizarInstrutor(@RequestBody DadosAtualizacaoInstrutor dados) {
+    public ResponseEntity<DadosDetalhamentoInstrutor> atualizarInstrutor(
+            @RequestBody DadosAtualizacaoInstrutor dados) {
         Instrutor instrutor = repository.getReferenceById(dados.id());
         instrutor.atualizarInformacoes(dados);
         repository.save(instrutor);
         return ResponseEntity.ok(new DadosDetalhamentoInstrutor(instrutor));
     }
 
-    @DeleteMapping("/{id}") // padrão de mercado
+    @DeleteMapping("/{id}") //Padrão de mercado
     @Transactional
     public ResponseEntity<Void> excluirInstrutor(@PathVariable Long id) {
-//repository.deleteById(id);
         Instrutor instrutor = repository.getReferenceById(id);
         instrutor.excluir();
         repository.save(instrutor);
         return ResponseEntity.noContent().build();
     }
 
-    /*@DeleteMapping("/{id") //util para algumas estrategias de front end.
+    /*@DeleteMapping("/{id}") //Útil para algumas estratégias de front-end.
     @Transactional
     public ResponseEntity<DadosDetalhamentoInstrutor> excluirInstrutor(@PathVariable Long id) {
         Instrutor instrutor = repository.getReferenceById(id);

@@ -6,8 +6,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.UniqueElements;
 
 public record DadosCadastroInstrutor(
+
         @NotBlank
         String nome,
 
@@ -20,7 +22,6 @@ public record DadosCadastroInstrutor(
 
         @NotBlank
         @Pattern(regexp = "\\d{9,11}")
-        //@Pattern(regexp = "[0-9],{9,11}")
         String cnh,
 
         @NotNull
