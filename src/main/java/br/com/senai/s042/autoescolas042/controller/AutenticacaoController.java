@@ -1,6 +1,6 @@
 package br.com.senai.s042.autoescolas042.controller;
 
-import br.com.senai.s042.autoescolas042.domain.usuario.DadosAutenticacao;
+import br.com.senai.s042.autoescolas042.domain.autenticacaoService.DadosAutenticacao;
 import br.com.senai.s042.autoescolas042.domain.usuario.Usuario;
 import br.com.senai.s042.autoescolas042.infra.security.DadosTokenJWT;
 import br.com.senai.s042.autoescolas042.infra.security.TokenService;
