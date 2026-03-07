@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -19,62 +18,67 @@ import java.net.URI;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository usuariosRepository;
+    private PasswordEncoder encoder;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UsuarioRepository repository;
+
+    @PostMapping
+    @Transactional
+    public ResponseEntity<DadosDetalhamentoUsuario> cadastrarUsuario(
+            @RequestBody @Valid DadosCadastroUsuario dados,
+            UriComponentsBuilder uriBuilder) {
+        String senhaCriptografada = encoder.encode(dados.senha());
+        Usuario usuario = new Usuario(
+                null,
+                dados.login(),
+                senhaCriptografada,
+                true
+        );
+        repository.save(usuario);
+        URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoUsuario(usuario));
+    }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemUsuarios>> listarUsuarios(
-            @PageableDefault(size = 10, sort = {"login"}) Pageable pageable){
-
-        Page page = usuariosRepository.findAllByAtivoTrue(pageable).map(DadosListagemUsuarios::new);
+    public ResponseEntity<Page<DadosListagemUsuario>> listarUsuarios(
+            Pageable paginacao) {
+        Page page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemUsuario::new);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DadosDetalhamentoUsuario> detalharUsuario(@PathVariable Long id){
-        Usuario usuario = usuariosRepository.getReferenceById(id);
-
+    public ResponseEntity<DadosDetalhamentoUsuario> detalharUsuario(
+            @PathVariable Long id) {
+        Usuario usuario = repository.getReferenceById(id);
         return ResponseEntity.ok(new DadosDetalhamentoUsuario(usuario));
-    }
-
-    @PostMapping
-    @Transactional
-    public ResponseEntity<DadosDetalhamentoUsuario> cadastrarUsuarios(
-            @RequestBody
-            @Valid
-            DadosCadastroUsuario dadosUsuario,
-            UriComponentsBuilder uriBuilder) {
-
-        Usuario usuario = new Usuario(dadosUsuario);
-        usuario.setSenha(passwordEncoder.encode(dadosUsuario.senha()));
-        usuariosRepository.save(usuario);
-
-        URI uri = uriBuilder.path("/usuarios/{id}")
-                .buildAndExpand(usuario.getId()).toUri();
-
-        return  ResponseEntity.created(uri)
-                .body(new DadosDetalhamentoUsuario(usuario));
     }
 
     @PutMapping
     @Transactional
-    public void atualizarUsuarios(@RequestBody DadosAtualizacaoUsuario dadosAtualizacaoUsuario){
-        Usuario usuario = usuariosRepository.getReferenceById(Long.valueOf(dadosAtualizacaoUsuario.id()));
+    public ResponseEntity<DadosDetalhamentoUsuario> atualizarUsuario(
+            @RequestBody @Valid DadosAtualizacaoUsuario dados) {
+        Usuario usuario = repository.getReferenceById(dados.id());
+        usuario.atualizarInformacoes(dados);
+        repository.save(usuario);
+        return ResponseEntity.ok(new DadosDetalhamentoUsuario(usuario));
+    }
 
-        usuario.atualizarInformacoes(dadosAtualizacaoUsuario);
-        usuariosRepository.save(usuario);
+    @PatchMapping
+    @Transactional
+    public ResponseEntity<DadosSuccess> atualizarSenha(
+            @RequestBody DadosAtualizacaoSenha dados) {
+        Usuario usuario = repository.getReferenceById(dados.id());
+        usuario.atualizarSenha(dados.senha());
+        return ResponseEntity.ok(new DadosSuccess("Senha atualizada com sucesso!"));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> excluirUsuario(@PathVariable Long id){
-
-        Usuario usuario = usuariosRepository.getReferenceById(id);
-        usuario.excluir();
-
-        usuariosRepository.save(usuario);
+    public ResponseEntity<Void> excluirUsuario(@PathVariable Long id) {
+        Usuario usuario = repository.getReferenceById(id);
+        usuario.excluirUsuario(id);
+        repository.save(usuario);
         return ResponseEntity.noContent().build();
     }
 }

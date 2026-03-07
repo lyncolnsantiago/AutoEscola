@@ -42,7 +42,8 @@ public class InstrutorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DadosDetalhamentoInstrutor> detalharInstrutor(@PathVariable Long id) {
+    public ResponseEntity<DadosDetalhamentoInstrutor> detalharInstrutor(
+            @PathVariable Long id) {
         Instrutor instrutor = repository.getReferenceById(id);
         return ResponseEntity.ok(new DadosDetalhamentoInstrutor(instrutor));
     }

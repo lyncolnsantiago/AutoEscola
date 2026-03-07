@@ -1,7 +1,10 @@
 package br.com.senai.s042.autoescolas042.domain.usuario;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,19 +25,12 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String login;
-    @Setter
     private String senha;
-    private Boolean ativo;
+    private Boolean ativo = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
-    }
-
-    public Usuario(DadosCadastroUsuario dadosUsuario) {
-        this.login = dadosUsuario.login();
-        this.senha = dadosUsuario.senha();
-        this.ativo = true;
     }
 
     @Override
@@ -67,18 +63,20 @@ public class Usuario implements UserDetails {
         return true;
     }
 
-    public void atualizarInformacoes(DadosAtualizacaoUsuario dadosAtualizacaoUsuario) {
-
-        if(dadosAtualizacaoUsuario.login() != null && !dadosAtualizacaoUsuario.login().isBlank()){
-            this.login = dadosAtualizacaoUsuario.login();
+    public void atualizarInformacoes(DadosAtualizacaoUsuario dados) {
+        if(dados.login() != null) {
+            this.login = dados.login();
         }
-
-        if(dadosAtualizacaoUsuario.senha() != null && !dadosAtualizacaoUsuario.senha().isBlank()){
-            this.senha = dadosAtualizacaoUsuario.senha();
+        if(dados.ativo() != null) {
+            this.ativo = dados.ativo();
         }
     }
 
-    public void excluir() {
+    public void excluirUsuario(Long id) {
         this.ativo = false;
+    }
+
+    public void atualizarSenha(String senha) {
+        this.senha = senha;
     }
 }

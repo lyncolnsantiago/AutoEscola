@@ -1,6 +1,7 @@
 CREATE TABLE instrutores(
     id BIGINT NOT NULL auto_increment,
     nome VARCHAR(100) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     cnh VARCHAR(11) NOT NULL UNIQUE,
     especialidade VARCHAR(20) NOT NULL,
@@ -11,6 +12,7 @@ CREATE TABLE instrutores(
     cidade VARCHAR(100) NOT NULL,
     uf VARCHAR(2) NOT NULL,
     cep VARCHAR(8) NOT NULL,
+    ativo TINYINT NOT NULL DEFAULT 1,
 
     PRIMARY KEY(id)
 );

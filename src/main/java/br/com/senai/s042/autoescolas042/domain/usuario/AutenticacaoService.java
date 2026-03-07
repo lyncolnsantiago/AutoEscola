@@ -1,6 +1,5 @@
-package br.com.senai.s042.autoescolas042.domain.autenticacaoService;
+package br.com.senai.s042.autoescolas042.domain.usuario;
 
-import br.com.senai.s042.autoescolas042.domain.usuario.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.annotation.Nonnull;
 import org.springframework.security.core.userdetails.UserDetails;
