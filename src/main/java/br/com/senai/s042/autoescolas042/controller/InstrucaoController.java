@@ -20,11 +20,9 @@ public class InstrucaoController {
     private AgendaDeInstrucoes agenda;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('Admin', 'User')")
-    public ResponseEntity agendarInstrucao(
-            @RequestBody
-            @Valid
-            DadosAgendamentoInstrucao dados) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<DadosDetalhamentoInstrucao> agendarInstrucao(
+            @RequestBody @Valid DadosAgendamentoInstrucao dados) {
         DadosDetalhamentoInstrucao dto = agenda.agendarInstrucao(dados);
         return ResponseEntity.ok(dto);
     }

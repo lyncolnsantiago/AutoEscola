@@ -1,7 +1,6 @@
 package br.com.senai.s042.autoescolas042.domain.instrucao;
 
 import br.com.senai.s042.autoescolas042.domain.alunos.Aluno;
-import br.com.senai.s042.autoescolas042.domain.instrutor.Especialidade;
 import br.com.senai.s042.autoescolas042.domain.instrutor.Instrutor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,13 +24,13 @@ public class Instrucao {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aluno_id")
-    Aluno aluno;
+    private Aluno aluno;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instrutor_id")
-    Instrutor instrutor;
+    private Instrutor instrutor;
 
-    @Enumerated
-    private Especialidade especialidade;
+    /*@Enumerated
+    private Especialidade especialidade;*/
     private LocalDateTime data;
 }

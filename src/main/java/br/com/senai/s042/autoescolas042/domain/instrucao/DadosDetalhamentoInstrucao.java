@@ -18,7 +18,7 @@ public record DadosDetalhamentoInstrucao(
                 instrucao.getId(),
                 instrucao.getAluno().getNome(),
                 instrucao.getInstrutor().getNome(),
-                instrucao.getEspecialidade(),
+                instrucao.getInstrutor().getEspecialidade(),
                 instrucao.getData()
         );
     }

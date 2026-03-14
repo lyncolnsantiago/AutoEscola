@@ -28,9 +28,12 @@ public class Usuario implements UserDetails {
     private String senha;
     private Boolean ativo = true;
 
+    @Enumerated(EnumType.STRING)
+    private Role perfil;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + perfil.name()));
     }
 
     @Override
@@ -69,6 +72,9 @@ public class Usuario implements UserDetails {
         }
         if(dados.ativo() != null) {
             this.ativo = dados.ativo();
+        }
+        if(dados.perfil() != null) {
+            this.perfil = dados.perfil();
         }
     }
 

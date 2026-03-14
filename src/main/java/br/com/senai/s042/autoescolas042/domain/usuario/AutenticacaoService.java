@@ -1,7 +1,6 @@
 package br.com.senai.s042.autoescolas042.domain.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import jakarta.annotation.Nonnull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,16 +10,10 @@ import org.springframework.stereotype.Service;
 public class AutenticacaoService implements UserDetailsService {
 
     @Autowired
-    private UsuarioRepository usuariosRepository;
+    private UsuarioRepository repository;
 
     @Override
-    public @Nonnull UserDetails loadUserByUsername(@Nonnull String username) throws UsernameNotFoundException {
-
-        UserDetails usuario = usuariosRepository.findByLogin(username);
-
-        if (usuario == null) {
-            throw new UsernameNotFoundException("Usuário não encontrado: " + username);
-        }
-        return usuario;
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return repository.findByLogin(username);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,6 +23,7 @@ public class InstrutorController {
 
     @PostMapping
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<DadosDetalhamentoInstrutor> cadastrarInstrutor(
             @RequestBody @Valid DadosCadastroInstrutor dados,
             UriComponentsBuilder uriBuilder) {
@@ -34,6 +36,7 @@ public class InstrutorController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Page<DadosListagemInstrutor>> listarInstrutores(
             @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         Page page = repository.findAllByAtivoTrue(paginacao).
@@ -42,6 +45,7 @@ public class InstrutorController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<DadosDetalhamentoInstrutor> detalharInstrutor(
             @PathVariable Long id) {
         Instrutor instrutor = repository.getReferenceById(id);
@@ -50,6 +54,7 @@ public class InstrutorController {
 
     @PutMapping
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<DadosDetalhamentoInstrutor> atualizarInstrutor(
             @RequestBody DadosAtualizacaoInstrutor dados) {
         Instrutor instrutor = repository.getReferenceById(dados.id());
@@ -60,6 +65,7 @@ public class InstrutorController {
 
     @DeleteMapping("/{id}") //Padrão de mercado
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Void> excluirInstrutor(@PathVariable Long id) {
         Instrutor instrutor = repository.getReferenceById(id);
         instrutor.excluir();

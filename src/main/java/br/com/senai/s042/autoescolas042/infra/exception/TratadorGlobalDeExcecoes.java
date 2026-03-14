@@ -2,6 +2,7 @@ package br.com.senai.s042.autoescolas042.infra.exception;
 
 import br.com.senai.s042.autoescolas042.domain.alunos.AlunoNaoExisteException;
 import br.com.senai.s042.autoescolas042.domain.instrucao.validacoes.ValidacaoException;
+import br.com.senai.s042.autoescolas042.domain.instrutor.InstrutorNaoExisteException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -25,8 +26,13 @@ public class TratadorGlobalDeExcecoes {
         return ResponseEntity.badRequest().body(erros.stream().map(DadosBadRequest::new).toList());
     }
 
+    @ExceptionHandler(InstrutorNaoExisteException.class)
+    public ResponseEntity<String> tratarInstrutorNaoExiste(InstrutorNaoExisteException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
     @ExceptionHandler(AlunoNaoExisteException.class)
-    public ResponseEntity<String> tratarAlunoNaoExiste(AlunoNaoExisteException ex ) {
+    public ResponseEntity<String> tratarAlunoNaoExiste(AlunoNaoExisteException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 

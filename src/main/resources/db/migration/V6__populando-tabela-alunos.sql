@@ -1,4 +1,3 @@
--- Populating alunos table
 INSERT INTO alunos (nome, email, cpf, especialidade, telefone, logradouro, bairro, cep, complemento, numero, uf, cidade, ativo)
 VALUES
     ('João Silva', 'joao.silva@email.com', '11122233344', 'CARRO', '(11) 98765-4321', 'Rua das Flores', 'Centro', '01001-000', 'Apto 101', '123', 'SP', 'São Paulo', 1),

@@ -1,4 +1,5 @@
 package br.com.senai.s042.autoescolas042.controller;
+
 import br.com.senai.s042.autoescolas042.domain.alunos.*;
 import br.com.senai.s042.autoescolas042.domain.instrutor.*;
 import jakarta.transaction.Transactional;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,6 +24,7 @@ public class AlunoController {
 
     @PostMapping
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<DadosDetalhamentoAluno> cadastrarAluno(
             @RequestBody @Valid DadosCadastroAluno dados,
             UriComponentsBuilder uriBuilder) {
@@ -34,6 +37,7 @@ public class AlunoController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Page<DadosListagemAluno>> listarAlunos(
             @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         Page page = repository.findAllByAtivoTrue(paginacao).
@@ -42,6 +46,7 @@ public class AlunoController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<DadosDetalhamentoAluno> detalharAluno(
             @PathVariable Long id) {
         Aluno aluno = repository.getReferenceById(id);
@@ -50,6 +55,7 @@ public class AlunoController {
 
     @PutMapping
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<DadosDetalhamentoAluno> atualizarAluno(
             @RequestBody DadosAtualizacaoAluno dados) {
         Aluno aluno = repository.getReferenceById(dados.id());
@@ -60,6 +66,7 @@ public class AlunoController {
 
     @DeleteMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Void> excluirAluno(@PathVariable Long id) {
         Aluno aluno = repository.getReferenceById(id);
         aluno.excluir();

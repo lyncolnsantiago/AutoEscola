@@ -12,7 +12,7 @@ public class ValidadorHorarioInteiro implements ValidadorAgendamento{
         LocalDateTime dataAgendamento = dados.data();
 
         if(dataAgendamento.getMinute() != 0 || dataAgendamento.getSecond() != 0) {
-            throw new ValidacaoException("O horario deve ser preenchido em horas inteiras (ex: 08:00, 13:00)");
+            throw new ValidacaoException("O horário deve ser preenchido em horas inteiras (ex: 08:00, 13:00)");
         }
     }
 }

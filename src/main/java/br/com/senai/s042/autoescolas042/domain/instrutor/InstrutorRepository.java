@@ -18,12 +18,20 @@ public interface InstrutorRepository extends JpaRepository<Instrutor, Long> {
                 i.especialidade = :especialidade
                 AND
                 i.id NOT IN(
-                    select a.instrutor.id FROM Instrucao a
+                    SELECT a.instrutor.id FROM Instrucao a
                     WHERE
                     a.data = :data
                 )
                 ORDER BY rand()
                 LIMIT 1
-""")
+    """)
     Instrutor escolherInstrutorAleatorioDisponivel(Especialidade especialidade, LocalDateTime data);
+
+    @Query("""
+        SELECT i.ativo
+        FROM Instrutor i
+        WHERE
+        i.id = :id
+    """)
+    Boolean findAtivoById(Long id);
 }

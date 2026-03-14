@@ -7,8 +7,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
 @Component
-public class ValidadorHorarioFuncionamento implements ValidadorAgendamento {
-
+public class ValidadorHorarioFuncionamento implements ValidadorAgendamento{
     @Override
     public void validar(DadosAgendamentoInstrucao dados) {
         LocalDateTime dataAgendamento = dados.data();
@@ -18,7 +17,7 @@ public class ValidadorHorarioFuncionamento implements ValidadorAgendamento {
         Boolean posFechamento = dataAgendamento.getHour() > 21 - 1;
 
         if(ehDomingo || preAbertura || posFechamento) {
-            throw new ValidacaoException("Tentativa de agendamento fora do horario de funcionamento!");
+            throw new ValidacaoException("Tentativa de agendamento fora do horário de funcionamento!");
         }
     }
 }

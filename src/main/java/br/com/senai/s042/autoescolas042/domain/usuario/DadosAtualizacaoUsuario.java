@@ -7,5 +7,6 @@ public record DadosAtualizacaoUsuario(
         @NotNull
         Long id,
         String login,
-        Boolean ativo) {
+        Boolean ativo,
+        Role perfil) {
 }

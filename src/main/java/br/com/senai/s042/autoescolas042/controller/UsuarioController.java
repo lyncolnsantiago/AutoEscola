@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +26,7 @@ public class UsuarioController {
 
     @PostMapping
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DadosDetalhamentoUsuario> cadastrarUsuario(
             @RequestBody @Valid DadosCadastroUsuario dados,
             UriComponentsBuilder uriBuilder) {
@@ -33,7 +35,8 @@ public class UsuarioController {
                 null,
                 dados.login(),
                 senhaCriptografada,
-                true
+                true,
+                dados.perfil()
         );
         repository.save(usuario);
         URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
@@ -41,6 +44,7 @@ public class UsuarioController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<DadosListagemUsuario>> listarUsuarios(
             Pageable paginacao) {
         Page page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemUsuario::new);
@@ -48,6 +52,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DadosDetalhamentoUsuario> detalharUsuario(
             @PathVariable Long id) {
         Usuario usuario = repository.getReferenceById(id);
@@ -56,6 +61,7 @@ public class UsuarioController {
 
     @PutMapping
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DadosDetalhamentoUsuario> atualizarUsuario(
             @RequestBody @Valid DadosAtualizacaoUsuario dados) {
         Usuario usuario = repository.getReferenceById(dados.id());
@@ -66,15 +72,18 @@ public class UsuarioController {
 
     @PatchMapping
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<DadosSuccess> atualizarSenha(
             @RequestBody DadosAtualizacaoSenha dados) {
+        String senhaCriptografada = encoder.encode(dados.senha());
         Usuario usuario = repository.getReferenceById(dados.id());
-        usuario.atualizarSenha(dados.senha());
+        usuario.atualizarSenha(senhaCriptografada);
         return ResponseEntity.ok(new DadosSuccess("Senha atualizada com sucesso!"));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> excluirUsuario(@PathVariable Long id) {
         Usuario usuario = repository.getReferenceById(id);
         usuario.excluirUsuario(id);

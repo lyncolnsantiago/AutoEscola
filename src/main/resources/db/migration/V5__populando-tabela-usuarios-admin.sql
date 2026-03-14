@@ -1,5 +1,3 @@
-
--- Populating alunos table
 INSERT INTO usuarios (login, senha, ativo)
 VALUES
     ('admin', '$2a$10$M5gWFbUsk4q68VoeASwlt.q155mI.LiI6eTwEGXCmKDXs4uTC9G8y', 1),
