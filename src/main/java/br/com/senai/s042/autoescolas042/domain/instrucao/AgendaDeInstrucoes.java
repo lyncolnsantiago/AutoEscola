@@ -15,18 +15,21 @@ import java.util.List;
 
 @Service
 public class AgendaDeInstrucoes {
+    private final InstrucaoRepository repository;
+    private final AlunoRepository alunoRepository;
+    private final InstrutorRepository instrutorRepository;
+    private final List<ValidadorAgendamento> validadores;
 
-    @Autowired
-    private InstrucaoRepository repository;
-
-    @Autowired
-    private AlunoRepository alunoRepository;
-
-    @Autowired
-    private InstrutorRepository instrutorRepository;
-
-    @Autowired
-    private List<ValidadorAgendamento> validadores;
+    public AgendaDeInstrucoes(
+            InstrucaoRepository repository,
+            AlunoRepository alunoRepository,
+            InstrutorRepository instrutorRepository,
+            List<ValidadorAgendamento> validadores) {
+        this.repository = repository;
+        this.alunoRepository = alunoRepository;
+        this.instrutorRepository = instrutorRepository;
+        this.validadores = validadores;
+    }
 
     @Transactional
     public DadosDetalhamentoInstrucao agendarInstrucao(DadosAgendamentoInstrucao dados) {
@@ -37,12 +40,14 @@ public class AgendaDeInstrucoes {
             throw new InstrutorNaoExisteException("ID do instrutor informado não existe!");
         }
 
-        //Validações das regras de negócio
         validadores.forEach(v -> v.validar(dados));
-
 
         Aluno aluno = alunoRepository.getReferenceById(dados.idAluno());
         Instrutor instrutor = escolherInstrutor(dados);
+
+        if (instrutor == null) {
+            throw new InstrutorIndisponivelException("Não há instrutor dísponivel para a data e hora escolhida!");
+        }
 
         Instrucao instrucao = new Instrucao(
                 null,

@@ -4,7 +4,6 @@ import br.com.senai.s042.autoescolas042.domain.alunos.*;
 import br.com.senai.s042.autoescolas042.domain.instrutor.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,31 +17,29 @@ import java.net.URI;
 @RestController
 @RequestMapping("/alunos")
 public class AlunoController {
+    private final AlunoService service;
 
-    @Autowired
-    private AlunoRepository repository;
+    public AlunoController(AlunoService service) {
+        this.service = service;
+    }
 
     @PostMapping
-    @Transactional
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<DadosDetalhamentoAluno> cadastrarAluno(
             @RequestBody @Valid DadosCadastroAluno dados,
             UriComponentsBuilder uriBuilder) {
-        Aluno aluno = new Aluno(dados);
-        repository.save(aluno);
-        URI uri = uriBuilder.path("/alunos/{id}")
-                .buildAndExpand(aluno.getId()).toUri();
+        DadosDetalhamentoAluno dto = service.cadastrar(dados);
+        URI uri = uriBuilder.path("alunos/{id}")
+                .buildAndExpand(dto.id()).toUri();
         return ResponseEntity.created(uri)
-                .body(new DadosDetalhamentoAluno(aluno));
+                .body(dto);
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Page<DadosListagemAluno>> listarAlunos(
             @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
-        Page page = repository.findAllByAtivoTrue(paginacao).
-                map(DadosListagemAluno::new);
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(service.listar(paginacao));
     }
 
     @GetMapping("/{id}")
