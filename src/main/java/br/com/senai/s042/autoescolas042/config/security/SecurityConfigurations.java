@@ -1,6 +1,5 @@
 package br.com.senai.s042.autoescolas042.config.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,9 +17,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfigurations {
+    private final SecurityFilter securityFilter;
 
-    @Autowired
-    private SecurityFilter securityFilter;
+    public SecurityConfigurations(SecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
@@ -28,7 +29,7 @@ public class SecurityConfigurations {
                 .sessionManagement(sm -> sm
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login", "/health-check").permitAll()
                         /*.requestMatchers(HttpMethod.POST,"/usuarios").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH,"/usuarios").hasAnyRole("ADMIN", "USER")*/
                         .anyRequest().authenticated()

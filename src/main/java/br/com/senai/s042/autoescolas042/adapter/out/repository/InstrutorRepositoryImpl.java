@@ -43,8 +43,7 @@ public class InstrutorRepositoryImpl implements InstrutorRepository {
 
     @Override
     public Boolean findAtivoById(Long id) {
-        Boolean ativo = repository.findAtivoById(id);
-        return ativo;
+        return repository.findAtivoById(id);
     }
 
     @Override
@@ -67,7 +66,6 @@ public class InstrutorRepositoryImpl implements InstrutorRepository {
 
     @Override
     public boolean existsById(Long id) {
-        Boolean exist = repository.existsById(id);
-        return exist;
+        return repository.existsById(id);
     }
 }

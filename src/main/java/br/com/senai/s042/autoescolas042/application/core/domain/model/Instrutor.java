@@ -67,7 +67,7 @@ public class Instrutor {
     }
 
     public void atualizarInformacoes(String nome, String telefone, Endereco endereco) {
-        if(nome != null && !nome.isBlank() && !nome.isEmpty()) {
+        if(nome != null) {
             this.nome = nome;
         }
         if(telefone != null) {

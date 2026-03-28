@@ -1,5 +1,6 @@
 package br.com.senai.s042.autoescolas042.application.core.usecase;
 
+import br.com.senai.s042.autoescolas042.adapter.in.controller.mapper.InstrucaoMapper;
 import br.com.senai.s042.autoescolas042.adapter.in.controller.request.instrucao.DadosAgendamentoInstrucao;
 import br.com.senai.s042.autoescolas042.adapter.in.controller.response.instrucao.DadosDetalhamentoInstrucao;
 import br.com.senai.s042.autoescolas042.application.core.domain.model.Aluno;
@@ -25,16 +26,19 @@ public class AgendaDeInstrucoes {
     private final InstrucaoRepository repository;
     private final AlunoRepository alunoRepository;
     private final InstrutorRepository instrutorRepository;
+    private final InstrucaoMapper mapper;
     private final List<ValidadorAgendamento> validadores;
 
     public AgendaDeInstrucoes(
             InstrucaoRepository repository,
             AlunoRepository alunoRepository,
             InstrutorRepository instrutorRepository,
+            InstrucaoMapper mapper,
             List<ValidadorAgendamento> validadores) {
         this.repository = repository;
         this.alunoRepository = alunoRepository;
         this.instrutorRepository = instrutorRepository;
+        this.mapper = mapper;
         this.validadores = validadores;
     }
 
@@ -70,8 +74,8 @@ public class AgendaDeInstrucoes {
                 instrutor,
                 dados.data()
         );
-        repository.save(instrucao);
-        return new DadosDetalhamentoInstrucao(instrucao);
+        Instrucao salvo = repository.save(instrucao);
+        return mapper.toDetailsDTO(salvo);
     }
 
     private Instrutor escolherInstrutor(DadosAgendamentoInstrucao dados) {

@@ -12,7 +12,7 @@
 	<artifactId>AutoEscolaS042</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AutoEscolaS042</name>
-	<description>API para backend do aplicativo de agendamento de instruções da Auto Escola S042.</description>
+	<description>API para backend do aplicativo de agendamento de instruções da Auto Escola - S042.</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -34,7 +34,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>fluent-hc</artifactId>
+			<version>4.5.14</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.13.2</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

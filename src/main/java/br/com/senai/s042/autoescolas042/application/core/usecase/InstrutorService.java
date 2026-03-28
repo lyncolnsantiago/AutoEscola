@@ -18,38 +18,39 @@ import org.springframework.stereotype.Service;
 public class InstrutorService {
     private final InstrutorRepository repository;
     private final EnderecoMapper enderecoMapper;
-    private final InstrutorMapper instrutorMapper;
+    private final InstrutorMapper mapper;
 
     public InstrutorService(
             InstrutorRepository repository,
             EnderecoMapper enderecoMapper,
-            InstrutorMapper instrutorMapper) {
+            InstrutorMapper mapper) {
         this.repository = repository;
         this.enderecoMapper = enderecoMapper;
-        this.instrutorMapper = instrutorMapper;
+        this.mapper = mapper;
     }
 
     @Transactional
     public DadosDetalhamentoInstrutor cadastrar(DadosCadastroInstrutor dados) {
-        Instrutor instrutor = instrutorMapper.toDomain(dados);
+        Instrutor instrutor = mapper.toDomain(dados);
         Instrutor salvo = repository.save(instrutor);
-        return instrutorMapper.toDetailsDTO(salvo);
+        return mapper.toDetailsDTO(salvo);
     }
 
     public Page<DadosListagemInstrutor> listar(Pageable paginacao) {
         return repository.findAllByAtivoTrue(paginacao)
-                .map(instrutorMapper::toListDTO);
+                .map(mapper::toListDTO);
     }
 
     public DadosDetalhamentoInstrutor detalhar(Long id) {
         Instrutor instrutor = repository.findById(id)
                 .orElseThrow(() -> new InstrutorNaoExisteException("ID do instrutor informado não existe!"));
-        return instrutorMapper.toDetailsDTO(instrutor);
+        return mapper.toDetailsDTO(instrutor);
     }
 
     @Transactional
     public DadosDetalhamentoInstrutor atualizar(DadosAtualizacaoInstrutor dados) {
-        Instrutor instrutor = repository.getReferenceById(dados.id());
+        Instrutor instrutor = repository.findById(dados.id())
+                .orElseThrow(() -> new InstrutorNaoExisteException("ID do instrutor informado não existe!"));
         instrutor.atualizarInformacoes(
                 dados.nome(),
                 dados.telefone(),
@@ -57,12 +58,13 @@ public class InstrutorService {
                 )
         );
         Instrutor salvo = repository.save(instrutor);
-        return instrutorMapper.toDetailsDTO(salvo);
+        return mapper.toDetailsDTO(salvo);
     }
 
     @Transactional
     public void excluir(Long id) {
-        Instrutor instrutor = repository.getReferenceById(id);
+        Instrutor instrutor = repository.findById(id)
+                .orElseThrow(() -> new InstrutorNaoExisteException("ID do instrutor informado não existe!"));
         instrutor.excluir();
         repository.save(instrutor);
     }

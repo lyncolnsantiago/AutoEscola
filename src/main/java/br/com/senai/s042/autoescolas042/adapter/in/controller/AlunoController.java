@@ -5,6 +5,7 @@ import br.com.senai.s042.autoescolas042.adapter.in.controller.request.aluno.Dado
 import br.com.senai.s042.autoescolas042.adapter.in.controller.response.aluno.DadosDetalhamentoAluno;
 import br.com.senai.s042.autoescolas042.adapter.in.controller.response.aluno.DadosListagemAluno;
 import br.com.senai.s042.autoescolas042.application.core.usecase.AlunoService;
+import br.com.senai.s042.autoescolas042.application.port.in.ModelDomainController;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,16 +19,24 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/alunos")
-public class AlunoController {
+public class AlunoController implements ModelDomainController<
+        DadosCadastroAluno,
+        DadosListagemAluno,
+        DadosAtualizacaoAluno,
+        Void,
+        DadosDetalhamentoAluno,
+        Long
+        > {
     private final AlunoService service;
 
     public AlunoController(AlunoService service) {
         this.service = service;
     }
 
+    @Override
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<DadosDetalhamentoAluno> cadastrarAluno(
+    public ResponseEntity<DadosDetalhamentoAluno> cadastrar(
             @RequestBody @Valid DadosCadastroAluno dados,
             UriComponentsBuilder uriBuilder) {
         DadosDetalhamentoAluno dto = service.cadastrar(dados);
@@ -37,32 +46,36 @@ public class AlunoController {
                 .body(dto);
     }
 
+    @Override
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Page<DadosListagemAluno>> listarAlunos(
+    public ResponseEntity<Page<DadosListagemAluno>> listar(
             @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         return ResponseEntity.ok(service.listar(paginacao));
     }
 
+    @Override
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<DadosDetalhamentoAluno> detalharAluno(
+    public ResponseEntity<DadosDetalhamentoAluno> detalhar(
             @PathVariable Long id) {
         DadosDetalhamentoAluno dto = service.detalhar(id);
         return ResponseEntity.ok(dto);
     }
 
+    @Override
     @PutMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<DadosDetalhamentoAluno> atualizarAluno(
+    public ResponseEntity<DadosDetalhamentoAluno> atualizar(
             @RequestBody @Valid DadosAtualizacaoAluno dados) {
         DadosDetalhamentoAluno dto = service.atualizar(dados);
         return ResponseEntity.ok(dto);
     }
 
+    @Override
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Void> excluirAluno(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }

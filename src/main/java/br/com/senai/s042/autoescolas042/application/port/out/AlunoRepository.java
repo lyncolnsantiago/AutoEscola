@@ -3,17 +3,14 @@ package br.com.senai.s042.autoescolas042.application.port.out;
 import br.com.senai.s042.autoescolas042.application.core.domain.model.Aluno;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-public interface AlunoRepository extends JpaRepository<Aluno, Long> {
+import java.util.Optional;
+
+public interface AlunoRepository {
     Page<Aluno> findAllByAtivoTrue(Pageable paginacao);
-
-    @Query("""
-        SELECT e.ativo
-        FROM Aluno e
-        WHERE
-        e.id = :id
-    """)
     Boolean findByIdAndAtivoTrue(Long id);
+    Aluno save(Aluno aluno);
+    Optional<Aluno> findById(Long id);
+    boolean existsById(Long id);
+    Aluno getReferenceById(Long aLong);
 }
